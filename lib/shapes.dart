@@ -2,8 +2,10 @@ import "dart:math";
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+const _scale = 130;
+
 Path coords(double w, double h, Path points) {
-  final n = min(w, h) / 240;
+  final n = min(w, h) / (_scale*2);
   return points.transform(Float64List.fromList([
       n, 0, 0, 0,
       0, -n, 0, 0,
@@ -15,55 +17,28 @@ Path coords(double w, double h, Path points) {
 // ############
 // ### Poly ###
 // ############
-class Poly extends StatefulWidget {
+class Poly extends StatelessWidget {
   final List<Offset> points;
   final Color clr;
   const Poly({super.key, required this.points, required this.clr});
-
-  @override
-  State<Poly> createState() => _PolyState();
-}
-
-class _PolyState extends State<Poly> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 1),
-    )..repeat(reverse: true);
-    super.initState();
-  }
-
+  
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return CustomPaint(
-          size: Size(
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height,
-          ),
-          painter: PolyPainter(_controller.value, widget.points, widget.clr),
-        );
-      },
+    return CustomPaint(
+      size: Size(
+        MediaQuery.of(context).size.width,
+        MediaQuery.of(context).size.height,
+      ),
+      painter: PolyPainter(points, clr),
     );
-  }
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }
 
 class PolyPainter extends CustomPainter {
-  final double anim;
   final List<Offset> points;
   final Color clr;
 
-  PolyPainter(this.anim, this.points, this.clr);
+  const PolyPainter(this.points, this.clr);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -80,32 +55,47 @@ class PolyPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return false;
   }
 }
 
-// #############
-// ### Arrow ###
-// #############
-class Arrow extends StatefulWidget {
-  final Offset p1;
-  final Offset p2;
-  final Color clr;
-  const Arrow({super.key, required this.p1, required this.p2, required this.clr});
+// #################
+// ### ArrowAnim ###
+// #################
+class ArrowAnim extends StatefulWidget {
+  final Offset startP1;
+  final Offset startP2;
+  final Offset finishP1;
+  final Offset finishP2;
+  final Color? startClr;
+  final Color? finishClr;
+  final double dur;
+
+  const ArrowAnim({
+    super.key,
+    required this.startP1,
+    required this.startP2,
+    required this.finishP1,
+    required this.finishP2,
+    required this.startClr,
+    required this.finishClr,
+    required this.dur,
+  });
 
   @override
-  State<Arrow> createState() => _ArrowState();
+  State<ArrowAnim> createState() => _ArrowAnimState();
 }
 
-class _ArrowState extends State<Arrow> with SingleTickerProviderStateMixin {
+class _ArrowAnimState extends State<ArrowAnim> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
-    )..repeat(reverse: true);
+      duration: Duration(milliseconds: (widget.dur*1000).toInt()),
+    )..forward();
+    //repeat(reverse: true);
     super.initState();
   }
 
@@ -119,7 +109,15 @@ class _ArrowState extends State<Arrow> with SingleTickerProviderStateMixin {
             MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height,
           ),
-          painter: ArrowPainter(_controller.value, widget.p1, widget.p2, widget.clr),
+          painter: ArrowAnimPainter(
+            _controller.value,
+            widget.startP1,
+            widget.startP2,
+            widget.finishP1,
+            widget.finishP2,
+            widget.startClr,
+            widget.finishClr,
+          ),
         );
       },
     );
@@ -131,22 +129,44 @@ class _ArrowState extends State<Arrow> with SingleTickerProviderStateMixin {
   }
 }
 
-class ArrowPainter extends CustomPainter {
+class ArrowAnimPainter extends CustomPainter {
   final double anim;
-  final Offset p1;
-  final Offset p2;
-  final Color clr;
+  final Offset startP1;
+  final Offset startP2;
+  final Offset finishP1;
+  final Offset finishP2;
+  final Color? startClr;
+  final Color? finishClr;
+  Color clr = Colors.transparent;
+  Color? clrN = Colors.transparent;
 
-  ArrowPainter(this.anim, this.p1, this.p2, this.clr);
+  ArrowAnimPainter(
+    this.anim,
+    this.startP1,
+    this.startP2,
+    this.finishP1,
+    this.finishP2,
+    this.startClr,
+    this.finishClr,
+  );
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    if (startClr != finishClr) {
+      clrN = Color.lerp(startClr, finishClr, anim);
+      if (clrN != null) { clr = clrN!; };
+    } else {
+      clr = startClr!;
+    }
+
     final paint = Paint()
     ..color = clr
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1.0;
 
+    final p1 = (finishP1-startP1)*anim + startP1;
+    final p2 = (finishP2-startP2)*anim + startP2;
     final tx = 10.0;
     final ty = 3.0;
     final d = p2-p1;
@@ -165,7 +185,6 @@ class ArrowPainter extends CustomPainter {
       c, s, 0, 0,
       -s, c, 0, 0,
       0, 0, 1, 0,
-      //0, 0, 0, 1,
       p1.dx, p1.dy, 0, 1,
     ]));
 
@@ -179,38 +198,53 @@ class ArrowPainter extends CustomPainter {
   }
 }
 
-// ###########
-// ### Arc ###
-// ###########
-class Arc extends StatefulWidget {
-  final Offset c;
-  final double r;
-  final double a1;
-  final double a2;
-  final Color clr;
+// ###############
+// ### ArcAnim ###
+// ###############
+class ArcAnim extends StatefulWidget {
+  final Offset startC;
+  final Offset finishC;
+  final double startR;
+  final double finishR;
+  final double startA1;
+  final double startA2;
+  final double finishA1;
+  final double finishA2;
+  final Color? startClr;
+  final Color? finishClr;
+  final bool fill;
+  final double dur;
 
-  const Arc({
+  const ArcAnim({
     super.key,
-    required this.c,
-    required this.r,
-    required this.a1,
-    required this.a2,
-    required this.clr
+    required this.startC,
+    required this.finishC,
+    required this.startR,
+    required this.finishR,
+    required this.startA1,
+    required this.startA2,
+    required this.finishA1,
+    required this.finishA2,
+    required this.startClr,
+    required this.finishClr,
+    required this.fill,
+    required this.dur,
   });
 
   @override
-  State<Arc> createState() => _ArcState();
+  State<ArcAnim> createState() => _ArcAnimState();
 }
 
-class _ArcState extends State<Arc> with SingleTickerProviderStateMixin {
+class _ArcAnimState extends State<ArcAnim> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: Duration(milliseconds: (widget.dur*1000).toInt()),
     )..forward();
+    //forward();
     //repeat(reverse: true);
     super.initState();
   }
@@ -225,13 +259,19 @@ class _ArcState extends State<Arc> with SingleTickerProviderStateMixin {
             MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height,
           ),
-          painter: ArcPainter(
+          painter: ArcAnimPainter(
             _controller.value,
-            widget.c,
-            widget.r,
-            widget.a1,
-            widget.a2,
-            widget.clr
+            widget.startC,
+            widget.finishC,
+            widget.startR,
+            widget.finishR,
+            widget.startA1,
+            widget.startA2,
+            widget.finishA1,
+            widget.finishA2,
+            widget.startClr,
+            widget.finishClr,
+            widget.fill,
           ),
         );
       },
@@ -244,40 +284,82 @@ class _ArcState extends State<Arc> with SingleTickerProviderStateMixin {
   }
 }
 
-class ArcPainter extends CustomPainter {
+class ArcAnimPainter extends CustomPainter {
   final double anim;
-  final Offset c;
-  final double r;
-  final double a1;
-  final double a2;
-  final Color clr;
+  final Offset startC;
+  final Offset finishC;
+  final double startR;
+  final double finishR;
+  final double startA1;
+  final double startA2;
+  final double finishA1;
+  final double finishA2;
+  final Color? startClr;
+  final Color? finishClr;
+  final bool fill;
+  Color clr = Colors.transparent;
+  Color? clrN = Colors.transparent;
 
-  ArcPainter(
+  ArcAnimPainter(
     this.anim,
-    this.c,
-    this.r,
-    this.a1,
-    this.a2,
-    this.clr
+    this.startC,
+    this.finishC,
+    this.startR,
+    this.finishR,
+    this.startA1,
+    this.startA2,
+    this.finishA1,
+    this.finishA2,
+    this.startClr,
+    this.finishClr,
+    this.fill,
   );
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    if (startClr != finishClr) {
+      clrN = Color.lerp(startClr, finishClr, anim);
+      if (clrN != null) { clr = clrN!; };
+    } else {
+      clr = startClr!;
+    }
+
     final paint = Paint()
     ..color = clr
-    ..style = PaintingStyle.stroke
     ..strokeWidth = 1.0;
+    if (fill) {
+      paint.style = PaintingStyle.fill;
+    } else {
+      paint.style = PaintingStyle.stroke;
+    }
 
-    final d = r * min(size.width, size.height) / 120;
-    final arcRect = Rect.fromCenter(center: Offset(size.width/2, size.height/2), width: d, height: d);
-    final s = -a1*anim;
-    final f = -(a2-a1)*anim;
-    canvas.drawArc(arcRect, s, f, false, paint);
+    final r = (finishR-startR)*anim + startR;
+    final d = r * min(size.width, size.height) / _scale;
+    final c = ((finishC-startC)*anim + startC) + Offset(size.width/2, size.height/2);
+    final arcRect = Rect.fromCenter(center: c, width: d, height: d);
+    final sa = (finishA1-startA1)*anim + startA1;
+    final fa = (finishA2-startA2)*anim + startA2;
+    canvas.drawArc(arcRect, sa, fa, false, paint);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+    return true;
   }
+}
+
+// ##############
+// ### PtAnim ###
+// ##############
+class PtAnim extends ArcAnim {
+
+  const PtAnim({
+    super.key,
+    required super.startC,
+    required super.finishC,
+    required super.startClr,
+    required super.finishClr,
+    required super.dur,
+  }) : super(startR: 1, finishR: 1, startA1: 0, finishA1: 0, startA2: 2*pi, finishA2: 2*pi, fill: true);
 }

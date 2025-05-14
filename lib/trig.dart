@@ -1,10 +1,12 @@
+import "dart:math";
 import 'package:flutter/material.dart';
 import 'utils.dart';
 import 'shapes.dart';
 
 class TrigPage extends StatelessWidget {
   const TrigPage({super.key});
-  final cl = 113.0;
+  final cl = 120.0;
+  final dur = 1.5;
 
   @override
   Widget build(BuildContext context) {
@@ -16,27 +18,45 @@ class TrigPage extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: [
-                  /*Poly(points: [
-                  Offset(-10, 0),
-                  Offset(10, 0),
-                ],
-                clr: Colors.blue,
-                ),
-                  Poly(points: [
-                  Offset(0, -10),
-                  Offset(0, 10),
-                ],
-                clr: Colors.blue,
-                ),*/
-                Arc(
-                  c: Offset(0, 0),
-                  r: 100,
-                  a1: 0.2,
-                  a2: -6.48,
-                  clr: Colors.green,
-                ),
-                Arrow(p1: Offset(0, -cl), p2: Offset(0, cl), clr: Colors.blue),
-                Arrow(p1: Offset(-cl, 0), p2: Offset(cl, 0), clr: Colors.blue),
+                  ArcAnim(
+                    startC: Offset(-50, -30),
+                    finishC: Offset(0, 0),
+                    startR: 0,
+                    finishR: 100,
+                    startA1: 2*pi,
+                    finishA1: 2*pi,
+                    startA2: 2*pi,
+                    finishA2: 2*pi,
+                    startClr: null,
+                    finishClr: Colors.green,
+                    fill: false,
+                    dur: dur,
+                  ),
+                  ArrowAnim(
+                    startP1: Offset(0, -cl),
+                    startP2: Offset(0, cl),
+                    finishP1: Offset(0, -cl),
+                    finishP2: Offset(0, cl),
+                    startClr: null,
+                    finishClr: Colors.blue,
+                    dur: dur,
+                  ),
+                  ArrowAnim(
+                    startP1: Offset(-cl, 0),
+                    startP2: Offset(cl,  0),
+                    finishP1: Offset(-cl, 0),
+                    finishP2: Offset(cl, 0),
+                    startClr: null,
+                    finishClr: Colors.blue,
+                    dur: dur,
+                  ),
+                  PtAnim(
+                    startC: Offset(-10, -50),
+                    finishC: Offset(10, 0),
+                    startClr: null,
+                    finishClr: Colors.white,
+                    dur: dur/2
+                  )
                 ]
               ),
             ),
@@ -45,7 +65,7 @@ class TrigPage extends StatelessWidget {
             SizedBox(height: 10),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
                   onPressed: () => Navigator.pushNamed(context, 'maths'),
