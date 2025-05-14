@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // ## Routing
-      initialRoute: 'trig',
+      initialRoute: 'algebra',
       routes: {
         'maths': (context) => MathsPage(),
         'algebra': (context) => AlgebraPage(),

@@ -20,7 +20,12 @@ Path coords(double w, double h, Path points) {
 class Poly extends StatelessWidget {
   final List<Offset> points;
   final Color clr;
-  const Poly({super.key, required this.points, required this.clr});
+
+  const Poly({
+    super.key,
+    required this.points,
+    required this.clr
+  });
   
   @override
   Widget build(BuildContext context) {
@@ -122,6 +127,7 @@ class _ArrowAnimState extends State<ArrowAnim> with SingleTickerProviderStateMix
       },
     );
   }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -362,4 +368,142 @@ class PtAnim extends ArcAnim {
     required super.finishClr,
     required super.dur,
   }) : super(startR: 1, finishR: 1, startA1: 0, finishA1: 0, startA2: 2*pi, finishA2: 2*pi, fill: true);
+}
+
+// ################
+// ### TextAnim ###
+// ################
+class TextAnim extends StatefulWidget {
+  final String text;
+  final Offset startP1;
+  final Offset startP2;
+  final Offset finishP1;
+  final Offset finishP2;
+  final Color? startClr;
+  final Color? finishClr;
+  final double dur;
+
+  const TextAnim({
+    super.key,
+    required this.text,
+    required this.startP1,
+    required this.startP2,
+    required this.finishP1,
+    required this.finishP2,
+    required this.startClr,
+    required this.finishClr,
+    required this.dur,
+  });
+
+  @override
+  State<TextAnim> createState() => _TextAnimState();
+}
+
+class _TextAnimState extends State<TextAnim> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: (widget.dur*1000).toInt()),
+    )..forward();
+    //repeat(reverse: true);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          size: Size(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height,
+          ),
+          painter: TextAnimPainter(
+            _controller.value,
+            widget.text,
+            widget.startP1,
+            widget.startP2,
+            widget.finishP1,
+            widget.finishP2,
+            widget.startClr,
+            widget.finishClr,
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
+class TextAnimPainter extends CustomPainter {
+  final double anim;
+  final String text;
+  final Offset startP1;
+  final Offset startP2;
+  final Offset finishP1;
+  final Offset finishP2;
+  final Color? startClr;
+  final Color? finishClr;
+  Color clr = Colors.transparent;
+  Color? clrN = Colors.transparent;
+
+  TextAnimPainter(
+    this.anim,
+    this.text,
+    this.startP1,
+    this.startP2,
+    this.finishP1,
+    this.finishP2,
+    this.startClr,
+    this.finishClr,
+  );
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    if (startClr != finishClr) {
+      clrN = Color.lerp(startClr, finishClr, anim);
+      if (clrN != null) { clr = clrN!; }
+    } else {
+      clr = startClr!;
+    }
+
+    /*final paint = Paint()
+    ..color = clr
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 1.0;*/
+    
+    final s1 = Offset(startP1.dx, -startP1.dy);
+    final s2 = Offset(startP2.dx, -startP2.dy);
+    final f1 = Offset(finishP1.dx, -finishP1.dy);
+    final f2 = Offset(finishP2.dx, -finishP2.dy);
+    final p1 = (f1-s1)*anim + s1 + Offset(size.width/2, size.height/2);
+    final p2 = (f2-s2)*anim + s2 + Offset(size.width/2, size.height/2);
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: clr,
+          fontSize: 20,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )
+    ..layout(maxWidth: p2.dx-p1.dx);
+    textPainter.paint(canvas, p1);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
 }

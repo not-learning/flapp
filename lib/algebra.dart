@@ -1,3 +1,4 @@
+import 'package:flapp/shapes.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
 
@@ -11,11 +12,19 @@ class AlgebraPage extends StatelessWidget {
         child: Column(
           children: [
             Expanded(child:
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Center(child:
-                  TextL(str: 'y = ax + b'),
-                ),
+              Stack(
+                children: [
+                  TextAnim(
+                    text: 'x + 3 = 5',
+                    startP1: Offset(-100, -100),
+                    startP2: Offset(120, -120),
+                    finishP1: Offset(0, 0),
+                    finishP2: Offset(120, -100),
+                    startClr: null,
+                    finishClr: Colors.white,
+                    dur: 1,
+                  ),
+                ],
               ),
             ),
 
