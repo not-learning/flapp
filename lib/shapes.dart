@@ -161,7 +161,7 @@ class ArrowAnimPainter extends CustomPainter {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
     if (startClr != finishClr) {
       clrN = Color.lerp(startClr, finishClr, anim);
-      if (clrN != null) { clr = clrN!; };
+      if (clrN != null) { clr = clrN!; }
     } else {
       clr = startClr!;
     }
@@ -326,7 +326,7 @@ class ArcAnimPainter extends CustomPainter {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
     if (startClr != finishClr) {
       clrN = Color.lerp(startClr, finishClr, anim);
-      if (clrN != null) { clr = clrN!; };
+      if (clrN != null) { clr = clrN!; }
     } else {
       clr = startClr!;
     }
@@ -375,6 +375,7 @@ class PtAnim extends ArcAnim {
 // ################
 class TextAnim extends StatefulWidget {
   final String text;
+  final double? fontSize;
   final Offset startP1;
   final Offset startP2;
   final Offset finishP1;
@@ -386,6 +387,7 @@ class TextAnim extends StatefulWidget {
   const TextAnim({
     super.key,
     required this.text,
+    required this.fontSize,
     required this.startP1,
     required this.startP2,
     required this.finishP1,
@@ -425,6 +427,7 @@ class _TextAnimState extends State<TextAnim> with SingleTickerProviderStateMixin
           painter: TextAnimPainter(
             _controller.value,
             widget.text,
+            widget.fontSize,
             widget.startP1,
             widget.startP2,
             widget.finishP1,
@@ -447,6 +450,7 @@ class _TextAnimState extends State<TextAnim> with SingleTickerProviderStateMixin
 class TextAnimPainter extends CustomPainter {
   final double anim;
   final String text;
+  final double? fontSize;
   final Offset startP1;
   final Offset startP2;
   final Offset finishP1;
@@ -456,9 +460,11 @@ class TextAnimPainter extends CustomPainter {
   Color clr = Colors.transparent;
   Color? clrN = Colors.transparent;
 
+
   TextAnimPainter(
     this.anim,
     this.text,
+    this.fontSize,
     this.startP1,
     this.startP2,
     this.finishP1,
@@ -476,11 +482,6 @@ class TextAnimPainter extends CustomPainter {
     } else {
       clr = startClr!;
     }
-
-    /*final paint = Paint()
-    ..color = clr
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 1.0;*/
     
     final s1 = Offset(startP1.dx, -startP1.dy);
     final s2 = Offset(startP2.dx, -startP2.dy);
@@ -493,7 +494,7 @@ class TextAnimPainter extends CustomPainter {
         text: text,
         style: TextStyle(
           color: clr,
-          fontSize: 20,
+          fontSize: fontSize,
         ),
       ),
       textDirection: TextDirection.ltr,

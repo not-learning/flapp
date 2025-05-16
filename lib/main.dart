@@ -1,26 +1,19 @@
+import 'package:flapp/maths.dart';
 import 'package:flutter/material.dart';
-import 'utils.dart';
-import 'algebra.dart';
-import 'power.dart';
-import 'trig.dart';
+import 'march.dart';
 
+// ##### TODO colours for dark and light!!! TODO
 void main() => runApp(const MainApp());
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
-  //var selectedPage = 'maths';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       // ## Routing
       initialRoute: 'algebra',
-      routes: {
-        'maths': (context) => MathsPage(),
-        'algebra': (context) => AlgebraPage(),
-        'power': (context) => PowerPage(),
-        'trig': (context) => TrigPage(),
-      },
+      routes: march,
 
       // ## Theme
       theme: ThemeData(
@@ -41,34 +34,6 @@ class MainApp extends StatelessWidget {
       // ## Content
       home: Scaffold(
         body: MathsPage(),
-      ),
-    );
-  }
-}
-
-class MathsPage extends StatelessWidget {
-  const MathsPage({super.key});
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: () => Navigator.pushNamed(context, 'algebra'),
-              child: TextL(str: 'Алгебра'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pushNamed(context, 'power'),
-              child: TextL(str: 'Степени'),
-            ),
-            //SizedBox(height: 10),
-            TextButton(onPressed: () => Navigator.pushNamed(context, 'trig'),
-            child: TextL(str: 'Тригонометрия')),
-          ],
-        ),
       ),
     );
   }

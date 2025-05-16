@@ -68,7 +68,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
      NOT IS_SYMLINK "$ENV{DESTDIR}/home/alex/projects/flapp/build/linux/x64/debug/bundle/flapp")
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}/home/alex/projects/flapp/build/linux/x64/debug/bundle/flapp"
-         OLD_RPATH "/home/alex/projects/flapp/linux/flutter/ephemeral:"
+         OLD_RPATH "/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux:/home/alex/projects/flapp/linux/flutter/ephemeral:"
          NEW_RPATH "$ORIGIN/lib")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/home/alex/projects/flapp/build/linux/x64/debug/bundle/flapp")
@@ -98,6 +98,18 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   file(INSTALL DESTINATION "/home/alex/projects/flapp/build/linux/x64/debug/bundle/lib" TYPE FILE FILES "/home/alex/projects/flapp/linux/flutter/ephemeral/libflutter_linux_gtk.so")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
+  list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
+   "/home/alex/projects/flapp/build/linux/x64/debug/bundle/lib/libaudioplayers_linux_plugin.so")
+  if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  file(INSTALL DESTINATION "/home/alex/projects/flapp/build/linux/x64/debug/bundle/lib" TYPE FILE FILES "/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/libaudioplayers_linux_plugin.so")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -134,6 +146,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/alex/projects/flapp/build/linux/x64/debug/flutter/cmake_install.cmake")
   include("/home/alex/projects/flapp/build/linux/x64/debug/runner/cmake_install.cmake")
+  include("/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/cmake_install.cmake")
 
 endif()
 

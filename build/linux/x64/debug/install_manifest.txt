@@ -1,11 +1,13 @@
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/flapp
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/icudtl.dat
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/alex/projects/flapp/build/linux/x64/debug/bundle/lib/libaudioplayers_linux_plugin.so
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/version.json
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin
+/home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/assets/power01.ogg
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/NativeAssetsManifest.json
 /home/alex/projects/flapp/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.json

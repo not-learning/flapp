@@ -18,3 +18,10 @@
 /home/alex/projects/flapp/build/linux/x64/debug/runner/CMakeFiles/install.dir
 /home/alex/projects/flapp/build/linux/x64/debug/runner/CMakeFiles/install/local.dir
 /home/alex/projects/flapp/build/linux/x64/debug/runner/CMakeFiles/install/strip.dir
+/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/CMakeFiles/audioplayers_linux_plugin.dir
+/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/CMakeFiles/edit_cache.dir
+/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/CMakeFiles/rebuild_cache.dir
+/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/CMakeFiles/list_install_components.dir
+/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/CMakeFiles/install.dir
+/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/CMakeFiles/install/local.dir
+/home/alex/projects/flapp/build/linux/x64/debug/plugins/audioplayers_linux/CMakeFiles/install/strip.dir
