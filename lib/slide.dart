@@ -23,11 +23,21 @@ class Slide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final tt = Tt();
-    final pp = AudioPlayer();
-    pp.play(AssetSource('power01.ogg'));
-    pp.pause();
-    //final ass = AssetSource('assets/power01.ogg');
+    final player = Sound();
+
+    void nextF() {
+      player.stop();
+      Navigator.pushNamed(context, next);
+    }
+
+    void prevF() {
+      player.stop();
+      Navigator.pushNamed(context, prev);
+    }
+
+    player.init('power01.ogg', nextF);
+    //player.play();
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -41,27 +51,15 @@ class Slide extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
-                  onPressed: () {
-                    pp.stop();
-                    Navigator.pushNamed(context, prev);
-                  },
+                  onPressed: () => prevF(),
                   child: TextL(str: 'B'),
                 ),
                 TextButton(
-                  onPressed: () {
-                    if (pp.state == PlayerState.paused) {
-                      pp.resume();
-                    } else {
-                      pp.pause();
-                    }
-                  },
+                  onPressed: () => player.pause(),
                   child: TextL(str: 'P')
                 ),
                 TextButton(
-                  onPressed: () {
-                    pp.stop();
-                    Navigator.pushNamed(context, next);
-                  },
+                  onPressed: () => nextF(),
                   child: TextL(str: 'F'),
                 ),
               ],
@@ -71,6 +69,55 @@ class Slide extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class Sound {
+  AudioPlayer player = AudioPlayer();
+  bool playing = false;
+
+  Sound();
+
+  void init(String file, Function func) {
+    isDone(func);
+    player.setSource(AssetSource(file));
+    player.pause();
+  }
+
+  play() {
+    if (!playing) {
+      player.resume();
+      playing = true;
+    }
+  }
+
+  stop() async {
+    playing = false;
+    player.pause();
+  }
+
+  pause() async {
+    if (playing) {
+      playing = false;
+      player.pause();
+    } else {
+      await player.resume();
+      playing = true;
+    }
+  }
+
+  dispose() async {
+    playing = false;
+    //await player.dispose(); // TODO why no wait?
+    player.dispose();
+  }
+
+  bool isPlaying() => playing;
+
+  isDone(func) {
+    player.onPlayerComplete.first
+    .then((onValue) => func());
+    //.catchError((error) => print(error)); //todo logging; DEV
   }
 }
 

@@ -249,7 +249,7 @@ class _ArcAnimState extends State<ArcAnim> with SingleTickerProviderStateMixin {
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: (widget.dur*1000).toInt()),
-    )..forward();
+    );
     //forward();
     //repeat(reverse: true);
     super.initState();
@@ -257,6 +257,7 @@ class _ArcAnimState extends State<ArcAnim> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    _controller.forward();
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
@@ -283,6 +284,7 @@ class _ArcAnimState extends State<ArcAnim> with SingleTickerProviderStateMixin {
       },
     );
   }
+
   @override
   void dispose() {
     _controller.dispose();

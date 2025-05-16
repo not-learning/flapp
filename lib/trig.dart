@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'utils.dart';
 import 'shapes.dart';
 
+// TODO Slide TODO
 class TrigPage extends StatelessWidget {
   const TrigPage({super.key});
   final cl = 120.0;
@@ -65,7 +66,7 @@ class TrigPage extends StatelessWidget {
             SizedBox(height: 10),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
                   onPressed: () => Navigator.pushNamed(context, 'maths'),
