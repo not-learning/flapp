@@ -1,9 +1,12 @@
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+//import 'package:audioplayers/audioplayers.dart';
+//import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'utils.dart';
+import 'sound.dart';
 
-class Slide extends StatelessWidget {
+class Slide extends ConsumerStatefulWidget {
   final List<Widget> anims;
   //final AudioPlayer player;
   //final BuildContext cnt;
@@ -22,10 +25,18 @@ class Slide extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final player = Sound();
+  ConsumerState<Slide> createState() => _SlideState();
+}
 
-    void nextF() {
+class _SlideState extends ConsumerState<Slide> {
+  Future<void>? _pendingPause;
+
+  @override
+  Widget build(BuildContext context) {
+    //final AsyncValue<void> player = ref.watch(soundProvider);
+    //final player = Sound();
+
+    /*void nextF() {
       player.stop();
       Navigator.pushNamed(context, next);
     }
@@ -35,44 +46,82 @@ class Slide extends StatelessWidget {
       Navigator.pushNamed(context, prev);
     }
 
-    player.init('power01.ogg', nextF);
+    player.init('power01.ogg', nextF);*/
     //player.play();
 
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Expanded(child: Stack(children: anims)),
+    return FutureBuilder(
+      future: _pendingPause,
+      builder: (context, snapshot) {
+        var pauseStr = 'Pause';
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          pauseStr = 'Waiting...';
+        } else if (snapshot.hasError) {
+          pauseStr = 'Error';
+        };
 
-            TextS(str: subs),
-            SizedBox(height: 10),
+        //final isErrored = snapshot.hasError && snapshot.connectionState != ConnectionState.waiting;
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        return Scaffold(
+          body: Center(
+            child: Column(
               children: [
-                TextButton(
-                  onPressed: () => prevF(),
-                  child: TextL(str: 'B'),
+                Expanded(child: Stack(children: widget.anims)),
+        
+                TextS(str: widget.subs),
+                SizedBox(height: 10),
+        
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      //onPressed: () => prevF(),
+                      onPressed: () {}(),
+                      child: TextL(str: 'B'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        final future = ref.read(soundProvider.notifier)
+                        .pause();
+                        setState(() => _pendingPause = future);
+                      },
+                      child: TextL(str: pauseStr),
+                    ),
+                    TextButton(
+                      //onPressed: () => player.pause(),
+                      onPressed: () {}(),
+                      child: TextL(str: 'F'),
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () => player.pause(),
-                  child: TextL(str: 'P')
-                ),
-                TextButton(
-                  onPressed: () => nextF(),
-                  child: TextL(str: 'F'),
-                ),
+                SizedBox(height: 10),
               ],
             ),
-            SizedBox(height: 10),
-          ],
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 }
 
-class Sound {
+/*@riverpod
+class MyAudio extends _$MyAudio {
+  final player = AudioPlayer();
+  bool playing = false;
+
+  @override
+  AudioPlayer build() { // TODO files
+    return player;
+  }
+
+  Future<void> play() async {
+    if (!playing) {
+      await player.resume();
+      playing = true;
+    }
+  }
+}
+
+/*class Sound {
   AudioPlayer player = AudioPlayer();
   bool playing = false;
 
@@ -119,7 +168,7 @@ class Sound {
     .then((onValue) => func());
     //.catchError((error) => print(error)); //todo logging; DEV
   }
-}
+}*/
 
 /*Future<Uint8List?> rr(BuildContext cnt) async {
     AssetBundle tt = DefaultAssetBundle.of(cnt);
@@ -130,4 +179,4 @@ class Sound {
     final player = AudioPlayer();
     player.play(ass);*/
     return aa;
-}*/
+}*/*/
